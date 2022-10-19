@@ -32,7 +32,10 @@
     </update>
 
     <select id="searchStore"  resultType="map">
-        SELECT * FROM store where (price like #{searchData}) or (name like #{searchData}) or (type like #{searchData});
+        SELECT * FROM store where
+        (price like #{searchData})
+        or (name like #{searchData})
+        or (type like #{searchData});
     </select>
 
 </mapper>

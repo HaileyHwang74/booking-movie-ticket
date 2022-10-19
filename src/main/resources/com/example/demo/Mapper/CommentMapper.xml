@@ -14,19 +14,50 @@
 
     </select>
 
+    <!--후기게시판 댓글 가져오기(등록순)-->
+    <select id="getReview" resultMap="commentMap" resultType="map">
+        SELECT *
+        FROM comment
+        where type = '후기' and review_id =#{review_id}
+        order by regDate asc
+    </select>
+
+    <!--후기게시판 댓글 (최신순)-->
+    <select id="getReview_desc" resultMap="commentMap" resultType="map">
+        SELECT *
+        FROM comment
+        where type = '후기' and review_id =#{review_id}
+        order by regDate desc
+    </select>
+
+    <!--문의글 답변-->
     <select id="getById" resultMap="commentMap" resultType="com.example.demo.VO.Comment">
         Select *
         FROM comment
-        WHERE id = #{id}
+        WHERE id = #{id} and type != '후기'
+
     </select>
 
+    <!-- 문의글 답변 삽입-->
     <insert id="insert">
-        INSERT INTO comment(id, user_id, title, content,regDate)
-        VALUES ( #{comment.id},'admin', #{comment.title}, #{comment.content} ,#{comment.regDate} )
+        INSERT INTO comment(id, user_id,type,title,content,regDate,review_id)
+        VALUES (#{comment.id},#{comment.user_id},#{comment.type}, #{comment.title}, #{comment.content} ,#{comment.regDate}, #{comment.review_id})
 
     </insert>
 
+    <!--후기게시판 댓글 삭제 -->
+    <delete id="delete">
+        Delete
+        from comment
+        WHERE user_id = #{user_id} and posting_num =#{posting_num}
+    </delete>
 
 
+
+    <update id="update">
+        UPDATE comment
+        SET  content=#{comment.content}, regDate=#{comment.regDate}
+        WHERE posting_num = #{posting_num}
+    </update>
 
 </mapper>

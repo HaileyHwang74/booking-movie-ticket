@@ -15,11 +15,9 @@
     <select id="getStill1" resultType="string">
         Select SUBSTRING_INDEX(stillUrl,",",1) FROM movie WHERE movieId=#{id}
     </select>
-
     <select id="getStill2" resultType="string">
         Select SUBSTRING_INDEX(SUBSTRING_INDEX(stillUrl,",",2),',',-1) FROM movie WHERE movieId=#{id}
     </select>
-
     <select id="getStill3" resultType="string">
         Select SUBSTRING_INDEX(SUBSTRING_INDEX(stillUrl,",",3),',',-1) FROM movie WHERE movieId=#{id}
     </select>
@@ -54,7 +52,12 @@
     </update>
 
     <select id="searchMovie"  resultType="map">
-        SELECT * FROM movie where (title like #{searchData}) or (actorNm like #{searchData}) or (directorNm like #{searchData}) or (plot like #{searchData}) or (genre like #{searchData})
+        SELECT * FROM movie where
+        (title like #{searchData}) or
+        (actorNm like #{searchData}) or
+        (directorNm like #{searchData}) or
+        (plot like #{searchData}) or
+        (genre like #{searchData})
     </select>
 
 

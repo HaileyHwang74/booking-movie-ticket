@@ -11,23 +11,27 @@
     <select id="getAll" resultMap="reviewBoardMap" resultType="map">
         SELECT *
         FROM community
-        order by type asc;
+        order by type desc;
     </select>
 
-    <select id="getById" resultMap="reviewBoardMap" resultType="com.example.demo.VO.ReviewBoard">
+
+    <select id="getById" resultMap="reviewBoardMap" resultType="map">
         SELECT * from(SELECT
-                    id,
-                    user_id,
-                    title,
-                    content,
-                    regDate,
-                    hit,
-                    type,
-                    url,
-                    cinema_name,
-                    star,
-                    cinema_image,
-                    LEAD(id,1,9999) OVER(ORDER BY id) AS next,
+                          id,
+                          user_id,
+                          title,
+                          content,
+                          regDate,
+                          hit,
+                          type,
+                          url,
+                          cinema_name,
+                          star,
+                          cinema_image,
+                          markerLat,
+                          markerLng,
+                          location,
+                          LEAD(id,1,9999) OVER(ORDER BY id) AS next,
                           LAG(id,1,9999) OVER(ORDER BY id) AS prev,
                           LEAD(TITLE,1,'다음글이 없습니다.') OVER(ORDER BY id) AS nextTitle,
                           LAG(TITLE,1,'이전글이 없습니다.') OVER(ORDER BY id) AS prevTitle
@@ -37,5 +41,47 @@
         WHERE id = #{id}
     </select>
 
+    <insert id="insert">
+        INSERT INTO community(user_id, title, content,type,regDate,cinema_name,markerLat, markerLng,location,star)
+        VALUES (#{reviewBoard.user_id}, #{reviewBoard.title}, #{reviewBoard.content},#{reviewBoard.type}, #{reviewBoard.regDate},#{reviewBoard.cinema_name},#{reviewBoard.markerLat},#{reviewBoard.markerLng},#{reviewBoard.location} ,#{reviewBoard.star})
+    </insert>
+
+
+    <!-- 필터기능-->
+    <select id = "filterReview" resultMap="reviewBoardMap" resultType="map">
+        SELECT * FROM community WHERE type = #{type}
+    </select>
+
+    <!-- 검색기능 -->
+    <select id ="searchReview" resultMap="reviewBoardMap" resultType="map">
+        SELECT * FROM community WHERE type=#{type} and title like #{search}
+    </select>
+
+    <delete id="delete">
+        Delete
+        from community
+        WHERE id = #{id}
+    </delete>
+
+    <update id="addHit">
+        update community
+        set hit = hit +1
+        WHERE id = #{id};
+    </update>
+
+    <update id="update">
+        UPDATE community SET
+                             title = #{reviewBoard.title},
+                             content = #{reviewBoard.content},
+                             regDate= #{reviewBoard.regDate},
+                             type =#{reviewBoard.type},
+                             cinema_name=#{reviewBoard.cinema_name},
+                             markerLat=#{reviewBoard.markerLat},
+                             markerLng=#{reviewBoard.markerLng},
+                             location= #{reviewBoard.location},
+                             star=#{reviewBoard.star}
+
+        Where id = #{id}
+    </update>
 
 </mapper>

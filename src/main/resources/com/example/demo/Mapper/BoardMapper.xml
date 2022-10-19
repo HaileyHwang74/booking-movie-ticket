@@ -15,6 +15,14 @@
         order by id asc
     </select>
 
+    <!--1대일 문의-->
+    <select id="getUser" resultMap="boardMap" resultType="map">
+        SELECT *
+        FROM board
+        where user_id = #{user_id}
+    </select>
+
+    <!--    이전 페이지, 다음페이지 이동 구현-->
     <select id="getById" resultMap="boardMap" resultType="com.example.demo.VO.Board">
         select * from(SELECT
                           id,
@@ -24,37 +32,21 @@
                           regDate,
                           hit,
                           type,
+                          secret,
+                          board_pw,
                           LEAD(id,1,9999) OVER(ORDER BY id) AS next,
                           LAG(id,1,9999) OVER(ORDER BY id) AS prev,
                           LEAD(TITLE,1,'다음글이 없습니다.') OVER(ORDER BY id) AS nextTitle,
                           LAG(TITLE,1,'이전글이 없습니다.') OVER(ORDER BY id) AS prevTitle
-
                       FROM board
                       order by id DESC) as b
         WHERE id = #{id}
     </select>
 
-<!--이전글 , 다음글 조회    /-->
-<!--    <select id="movePage" parameterType="int" resultType="com.example.demo.VO.Board">
-        select * from(SELECT
-                          id,
-                          LEAD(id,1,9999) OVER(ORDER BY id) AS next,
-                          LAG(id,1,9999) OVER(ORDER BY id) AS prev,
-                          TITLE,
-                          LEAD(TITLE,1,9999) OVER(ORDER BY id) AS nextTitle,
-                          LAG(TITLE,1,9999) OVER(ORDER BY id) AS prevTitle
-
-                      FROM board
-                      order by id DESC) as b
-        WHERE id = #{id}
-    </select>-->
-
-
-
 
     <insert id="insert">
-        INSERT INTO board(user_id, title, content,type,regDate)
-        VALUES (#{board.user_id}, #{board.title}, #{board.content},#{board.type}, #{board.regDate})
+        INSERT INTO board(user_id, title, content,type,regDate,board_pw,secret)
+        VALUES (#{board.user_id}, #{board.title}, #{board.content},#{board.type}, #{board.regDate},#{board.board_pw},#{board.secret})
     </insert>
 
 
@@ -70,6 +62,7 @@
         SET user_id=#{board.user_id},
             title=#{board.title},
             content=#{board.content},
+            type =#{board.type},
             hit=#{board.hit},
             regDate=#{board.regDate}
         WHERE id = #{id}
@@ -82,4 +75,14 @@
         WHERE id = #{board.id};
     </update>
 
+    <!--필터-->
+    <select id = "filterReview" resultMap="boardMap" resultType="map">
+
+        SELECT * FROM board WHERE type = #{type}
+    </select>
+
+    <!--검색기능-->
+    <select id ="searchReview" resultMap="boardMap" resultType="map">
+        SELECT * FROM board WHERE( type=#{type} and title like #{search} )or  ( type =#{type} and content like #{search} ) or(type =#{type} and  user_id like #{search}    )
+    </select>
 </mapper>
