@@ -78,6 +78,7 @@
     <!--필터-->
     <select id = "filterReview" resultMap="boardMap" resultType="map">
 
+
         SELECT * FROM board WHERE type = #{type}
     </select>
 
